@@ -74,7 +74,7 @@ const questionFlow = [
 const fallbackCopy = {
   headline: 'For My Girl',
   leadHtml:
-    'Your little "baby daddy applications" bit is ridiculous and I still love it. You are annoying in the cutest way, I could talk to you all day, and yeah... you are still applying for <strong>My Girl</strong>, Myszka.',
+    'Your little "applicant queue" joke is ridiculous and I still love it. You are annoying in the cutest way, I could talk to you all day, and yeah... you are still applying for <strong>My Girl</strong>, Myszka.',
   hint: 'Be bratty if you want. I am still here, still choosing you.',
   noSelection: 'Pick how you want me tonight first.',
   selectedFormat: (date) => `You picked: ${date}. I am in.`,
@@ -317,7 +317,7 @@ function getProfileCopy() {
     return {
       headline,
       leadHtml:
-        'Your little "baby daddy applications" bit is chaotic, dramatic, and somehow very cute. You still got picked for <strong>My Girl</strong>.',
+        'Your little "applicant queue" joke is chaotic, dramatic, and somehow very cute. You still got picked for <strong>My Girl</strong>.',
       hint: future
         ? 'Witty mode on. We joke heavy, but I am still intentional, Myszka.'
         : 'Witty mode on. Teasing allowed, effort still mandatory. So am I.',
@@ -341,7 +341,7 @@ function getProfileCopy() {
   return {
     headline,
     leadHtml:
-      'Your little "baby daddy applications" bit still gets on my nerves in the best way, and I could still talk to you all day. So yeah, you are still applying for <strong>My Girl</strong>.',
+      'Your little "applicant queue" joke still gets on my nerves in the best way, and I could still talk to you all day. So yeah, you are still applying for <strong>My Girl</strong>.',
     hint: future
       ? 'Sweet mode on. Soft vibe, real intention.'
       : 'Sweet mode on. Playful outside, protective where it counts.',
