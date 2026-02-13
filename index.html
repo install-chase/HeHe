@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>For My Girl</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <canvas id="sparkleCanvas" aria-hidden="true"></canvas>
+    <div id="blastOverlay" aria-hidden="true"></div>
+    <div class="sigil sigil-left" aria-hidden="true"></div>
+    <div class="sigil sigil-right" aria-hidden="true"></div>
+    <div class="grime-overlay" aria-hidden="true"></div>
+    <button id="eggHintBtn" class="egg-hint" type="button" aria-label="Hidden clue">psst... tap me x3</button>
+    <button id="letterRevealBtn" class="letter-chip" type="button" aria-label="Open letter">open letter?</button>
+    <button class="bg-secret-btn brat-secret-btn secret-a" data-secret="push" type="button" aria-label="Hidden secret">still</button>
+    <button class="bg-secret-btn brat-secret-btn secret-b" data-secret="bully" type="button" aria-label="Hidden secret">brat</button>
+    <button class="bg-secret-btn brat-secret-btn secret-c" data-secret="mine" type="button" aria-label="Hidden secret">mine?</button>
+    <button class="bg-secret-btn brat-secret-btn secret-d" data-secret="war" type="button" aria-label="Hidden secret">always</button>
+
+    <main class="container">
+      <p class="eyebrow">for my favorite menace</p>
+      <h1 id="mainHeadline">For My Girl</h1>
+      <p id="leadText" class="lead">
+        Your little "baby daddy applications" bit is ridiculous and I still love it.
+        You are annoying in the cutest way, I could talk to you all day, and yeah...
+        you are still applying for <strong>My Girl</strong>, Myszka.
+      </p>
+
+      <section class="card controls">
+        <h2>Quick Vibe Check</h2>
+        <p class="small">Three real questions so I can know you better and match your energy.</p>
+        <div class="quiz-shell">
+          <p id="quizProgress" class="quiz-progress">Question 1 of 3</p>
+          <p id="quizQuestion" class="control-label">Which side of you is out tonight?</p>
+          <div id="quizButtons" class="control-buttons"></div>
+          <p id="quizStatus" class="small">Pick an answer to continue.</p>
+          <button id="quizResetBtn" class="secondary" type="button">Start Over</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Us, Basically</h2>
+        <ul>
+          <li><strong>You:</strong> brat, soft, menace, all of it somehow cute</li>
+          <li><strong>Me:</strong> lightly annoyed, heavily obsessed</li>
+          <li><strong>Us:</strong> long-distance but same energy all day</li>
+          <li><strong>Daily vibe:</strong> voice notes, flirting, and checking in for real</li>
+          <li><strong>Unspoken rule:</strong> tease each other, still take care of each other</li>
+          <li><strong>Big picture:</strong> fun every day, intentional where it counts</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Pick Tonight's Vibe</h2>
+        <div class="option-grid" role="group" aria-label="Date options">
+          <button class="opt-btn" data-option="Call me on Discord">Call me on Discord</button>
+          <button class="opt-btn" data-option="Watch with me">Watch with me</button>
+          <button class="opt-btn" data-option="Game with me">Game with me</button>
+        </div>
+        <p id="chosenOption" class="status" aria-live="polite">No selection yet.</p>
+      </section>
+
+      <section class="card">
+        <h2>Your Move</h2>
+        <p id="finalHint" class="small">Brat behavior accepted. Cute confidence required.</p>
+        <div class="action-row">
+          <button id="acceptBtn" class="primary">ACCEPT</button>
+          <button id="bratBtn" class="secondary">Be a Brat About It</button>
+        </div>
+        <p id="result" class="status" aria-live="polite"></p>
+      </section>
+
+      <footer>
+        <p id="footerSecretTap" class="footer-secret-hint">psst... one more secret x2</p>
+      </footer>
+    </main>
+
+    <section id="insideJokeModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-card">
+        <p class="eyebrow">one more thing</p>
+        <h2 id="modalTitle">Okay You Win</h2>
+        <p id="modalLine" class="lead"></p>
+        <div class="action-row modal-actions">
+          <button id="closeModalBtn" class="primary" type="button">Okay, that was cute</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="easterEggModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="eggTitle">
+      <div class="modal-card">
+        <p class="eyebrow">secret found</p>
+        <h2 id="eggTitle">For You, Myszka</h2>
+        <p id="eggLine" class="lead"></p>
+        <div class="action-row modal-actions">
+          <button id="closeEggBtn" class="primary" type="button">okay wow</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="letterModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
+      <div class="modal-card">
+        <p class="eyebrow">for your eyes</p>
+        <h2 id="letterTitle">open letter</h2>
+        <p id="letterTypeText" class="lead"></p>
+        <div class="action-row modal-actions">
+          <button id="closeLetterBtn" class="primary" type="button">okay, wow</button>
+        </div>
+      </div>
+    </section>
+
+    <script src="script.js"></script>
+  </body>
+</html>
