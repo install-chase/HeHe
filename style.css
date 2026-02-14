@@ -208,10 +208,9 @@ body {
 }
 
 .super-secret-btn {
-  left: 50%;
-  top: clamp(10px, 2.2vw, 22px);
-  transform: translateX(-50%);
-  opacity: 0.2;
+  left: clamp(10px, 2.2vw, 22px);
+  top: calc(14px + env(safe-area-inset-top));
+  opacity: 0.3;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
 }
