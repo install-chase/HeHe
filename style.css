@@ -490,20 +490,22 @@ button:active {
   width: 64px;
   height: 64px;
   min-height: 0;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 220, 238, 0.68);
+  border-radius: 50%;
+  border: none;
   background-image: url("seal.jpg");
   background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center 36%;
+  background-size: 126% auto;
+  background-position: center 34%;
+  background-color: transparent;
+  clip-path: circle(46% at 50% 50%);
   color: transparent;
   font-size: 0;
   display: grid;
   place-items: center;
   opacity: 1;
   transform: rotate(0deg) scale(1);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.38);
-  filter: saturate(1.06) contrast(1.03);
+  box-shadow: none;
+  filter: saturate(1.08) contrast(1.05);
   transition: transform 80ms linear;
 }
 
