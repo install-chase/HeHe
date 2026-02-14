@@ -10,8 +10,6 @@ if (viewportMeta) {
 }
 document.body.style.minWidth = '1024px';
 
-const optionButtons = document.querySelectorAll('.opt-btn');
-const chosenOption = document.getElementById('chosenOption');
 const acceptBtn = document.getElementById('acceptBtn');
 const bratBtn = document.getElementById('bratBtn');
 const result = document.getElementById('result');
@@ -63,7 +61,6 @@ const quizButtons = document.getElementById('quizButtons');
 const quizStatus = document.getElementById('quizStatus');
 const quizResetBtn = document.getElementById('quizResetBtn');
 
-let selectedDate = null;
 let eyebrowTapCount = 0;
 let eyebrowTapTimer = null;
 let footerTapCount = 0;
@@ -127,11 +124,9 @@ const questionFlow = [
 const fallbackCopy = {
   headline: 'For My Girl',
   leadHtml:
-    'Your little "applicant queue" joke is ridiculous and I still love it. You are impossible in the cutest way, I could talk to you all day, and yeah... you are still applying for <strong>My Girl</strong>, Myszka.',
+    'Our husband-and-wife joke is getting dangerously accurate. You are impossible in the cutest way, and I like that confidence on you, <strong>Myszka</strong>.',
   hint: 'Be bratty if you want. I am still here, still choosing you.',
-  noSelection: 'Pick how you want me tonight first.',
-  selectedFormat: (date) => `You picked: ${date}. I am in.`,
-  accepted: (date) => `Accepted. Tonight we do ${date}. I joke with you a lot, but I mean this for real.`,
+  accepted: () => 'Accepted. Husband energy acknowledged. I am in.',
   negotiations: ['Yeah yeah, keep talking. I still like you too much.']
 };
 
@@ -176,13 +171,6 @@ const bratSecretToasts = [
   'secret brat button clicked...',
   'oh? found another one.',
   'you love these little secrets, huh.'
-];
-
-const missingDateReactions = [
-  "Nice try, pick tonight's vibe first, menace.",
-  "You skipped the date pick like a true brat. Choose one.",
-  "Hold up, Myszka. Pick the plan first, then press ACCEPT.",
-  "You clicked fast. I like it. Now pick tonight's vibe."
 ];
 
 const buttonReactions = {
@@ -264,23 +252,6 @@ const buttonReactions = {
         'You picked deeper talk. good choice.'
       ]
     }
-  },
-  date: {
-    'Call me on Discord': [
-      'Call me on Discord picked. good, I just want your voice.',
-      'You picked a call? yeah, I am all yours.',
-      'Discord call it is. tell me everything.'
-    ],
-    'Watch with me': [
-      'Watch with me picked. you are talking through half of it and I support it.',
-      'You picked watch with me? I will press play when you do.',
-      'Movie with you sounds perfect. commentary included.'
-    ],
-    'Game with me': [
-      'Game with me picked. prepare for playful trash talk.',
-      'You picked game with me? winner gets bragging rights and compliments.',
-      'Game with me locked. do not be dramatic when I win.'
-    ]
   }
 };
 
@@ -370,14 +341,11 @@ function getProfileCopy() {
     return {
       headline,
       leadHtml:
-        'Your little "applicant queue" joke is chaotic, dramatic, and somehow very cute. You still got picked for <strong>My Girl</strong>.',
+        'You keep calling us husband and wife like it is already official. Confident, chaotic, and very you.',
       hint: future
         ? 'Witty mode on. We joke heavy, but I am still intentional, Myszka.'
         : 'Witty mode on. Teasing allowed, effort still mandatory. So am I.',
-      noSelection: 'Pick how you want me tonight first.',
-      selectedFormat: (date) => `Locked in: ${date}. say less.`,
-      accepted: (date) =>
-        `Accepted. Tonight we do ${date}. You can bully me a little, but you are still mine in the cutest way.`,
+      accepted: () => 'Accepted. Mrs. Menace energy locked in. I am in.',
       negotiations: [
         'Dramatic? yes. unreasonable? yes. still cute? unfortunately yes.',
         'You can bully me a little; I still flirt back harder.',
@@ -394,14 +362,11 @@ function getProfileCopy() {
   return {
     headline,
     leadHtml:
-      'Your little "applicant queue" joke still gets on my nerves in the best way, and I could still talk to you all day. So yeah, you are still applying for <strong>My Girl</strong>.',
+      'Our husband-and-wife inside joke is still my favorite. You say it with confidence, and I am not arguing.',
     hint: future
       ? 'Sweet mode on. Soft vibe, real intention.'
       : 'Sweet mode on. Playful outside, protective where it counts.',
-    noSelection: 'Pick how you want me tonight first.',
-    selectedFormat: (date) => `Chosen: ${date}. perfect.`,
-    accepted: (date) =>
-      `Accepted. Tonight is ${date}. You bring chaos, I bring consistency, and I keep you close.`,
+    accepted: () => 'Accepted. Husband and wife joke still hits, and I am still choosing you.',
     negotiations: [
       'Counteroffer accepted: extra affection plus a voice-note bonus.',
       'You can tease me; I am still showing up properly.',
@@ -420,12 +385,6 @@ function syncCopy() {
   mainHeadline.textContent = copy.headline;
   leadText.innerHTML = copy.leadHtml;
   finalHint.textContent = copy.hint;
-
-  if (!selectedDate) {
-    chosenOption.textContent = 'No selection yet.';
-  } else {
-    chosenOption.textContent = copy.selectedFormat(selectedDate);
-  }
 }
 
 function setAnswer(question, value) {
@@ -477,16 +436,6 @@ function resetInterview() {
   syncCopy();
 }
 
-optionButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    optionButtons.forEach((btn) => btn.classList.remove('active'));
-    button.classList.add('active');
-    selectedDate = button.dataset.option;
-    chosenOption.textContent = getProfileCopy().selectedFormat(selectedDate);
-    showButtonToast(nextUniqueReaction(`date-${selectedDate}`, buttonReactions.date[selectedDate]));
-  });
-});
-
 quizResetBtn.addEventListener('click', () => {
   resetInterview();
   showButtonToast(nextUniqueReaction('reset', buttonReactions.reset));
@@ -494,14 +443,7 @@ quizResetBtn.addEventListener('click', () => {
 
 acceptBtn.addEventListener('click', () => {
   const copy = getProfileCopy();
-
-  if (!selectedDate) {
-    result.textContent = copy.noSelection;
-    showButtonToast(nextUniqueReaction('missing-date', missingDateReactions));
-    return;
-  }
-
-  result.textContent = copy.accepted(selectedDate);
+  result.textContent = copy.accepted();
   triggerSubmitBlast();
   showInsideJoke();
   showButtonToast(nextUniqueReaction('accept', buttonReactions.accept));
