@@ -455,10 +455,15 @@ acceptBtn.addEventListener('click', () => {
 });
 
 bratBtn.addEventListener('click', () => {
-  const lines = getProfileCopy().negotiations;
-  const line = lines[Math.floor(Math.random() * lines.length)];
-  result.textContent = line;
+  result.textContent = randomFrom(getProfileCopy().negotiations);
   showButtonToast(nextUniqueReaction('negotiate', buttonReactions.negotiate));
+
+  bratBtn.classList.remove('blast-shake');
+  void bratBtn.offsetWidth;
+  bratBtn.classList.add('blast-shake');
+  setTimeout(() => {
+    bratBtn.classList.remove('blast-shake');
+  }, 560);
 });
 
 const canvas = document.getElementById('sparkleCanvas');
@@ -466,8 +471,9 @@ const ctx = canvas.getContext('2d');
 let particles = [];
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
+  canvas.width = document.documentElement.clientWidth;
   canvas.height = window.innerHeight;
+  document.body.style.overflowX = 'hidden';
 }
 
 window.addEventListener('resize', resizeCanvas);
@@ -517,29 +523,35 @@ function triggerSubmitBlast() {
 }
 
 function showInsideJoke() {
-  const line = insideJokes[Math.floor(Math.random() * insideJokes.length)];
-  modalLine.textContent = line;
+  modalLine.textContent = randomFrom(insideJokes);
   insideJokeModal.classList.add('show');
   insideJokeModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeInsideJoke() {
   insideJokeModal.classList.remove('show');
   insideJokeModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  document.body.style.overflowX = 'hidden';
 }
 
 function showEasterEgg(message) {
   eggLine.textContent = message;
   easterEggModal.classList.add('show');
   easterEggModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeEasterEgg() {
   easterEggModal.classList.remove('show');
   easterEggModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  document.body.style.overflowX = 'hidden';
 }
 
-function handleEyebrowTap() {
+function handleEyebrowTap(e) {
+  if (e) e.preventDefault();
   eyebrowTapCount += 1;
   if (eyebrowTapTimer) {
     clearTimeout(eyebrowTapTimer);
@@ -561,7 +573,8 @@ function handleEyebrowTap() {
   }, 2200);
 }
 
-function handleFooterTap() {
+function handleFooterTap(e) {
+  if (e) e.preventDefault();
   footerTapCount += 1;
   if (footerTapTimer) {
     clearTimeout(footerTapTimer);
@@ -612,12 +625,15 @@ function typeLetter(text) {
 function openLetter() {
   letterModal.classList.add('show');
   letterModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
   typeLetter(finalLetterMessage);
 }
 
 function closeLetter() {
   letterModal.classList.remove('show');
   letterModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  document.body.style.overflowX = 'hidden';
 }
 
 function drawSpark(x, y, size, color) {
@@ -672,7 +688,8 @@ closeModalBtn.addEventListener('click', () => {
 });
 closeEggBtn.addEventListener('click', closeEasterEgg);
 bratSecretButtons.forEach((button) => {
-  button.addEventListener('click', () => {
+  button.addEventListener('click', (e) => {
+    e.preventDefault();
     const key = button.dataset.secret;
     const message =
       key === 'war'
