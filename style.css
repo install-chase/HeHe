@@ -210,9 +210,12 @@ body {
 .super-secret-btn {
   left: clamp(10px, 2.2vw, 22px);
   top: calc(14px + env(safe-area-inset-top));
-  opacity: 0.3;
+  opacity: 0.44;
+  color: rgba(255, 224, 238, 0.62);
+  text-shadow: 0 0 10px rgba(255, 113, 170, 0.28);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
+  animation: superSecretGlow 3.2s ease-in-out infinite;
 }
 
 .container {
@@ -585,6 +588,12 @@ button:focus-visible {
   0% { transform: scale(1); }
   45% { transform: scale(1.12); }
   100% { transform: scale(1); }
+}
+
+@keyframes superSecretGlow {
+  0% { opacity: 0.34; text-shadow: 0 0 6px rgba(255, 113, 170, 0.16); }
+  50% { opacity: 0.56; text-shadow: 0 0 14px rgba(255, 137, 185, 0.35); }
+  100% { opacity: 0.34; text-shadow: 0 0 6px rgba(255, 113, 170, 0.16); }
 }
 
 .modal {
