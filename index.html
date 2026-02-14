@@ -79,6 +79,14 @@
         <p id="result" class="status" aria-live="polite"></p>
       </section>
 
+      <section class="card mini-card">
+        <h2>Bonus Chaos Mode</h2>
+        <p class="small">mini game unlocked. catch the heart before time runs out.</p>
+        <div class="action-row">
+          <button id="openGameBtn" class="secondary" type="button">play mini game</button>
+        </div>
+      </section>
+
       <footer>
         <p id="footerSecretTap" class="footer-secret-hint">psst... one more secret x2</p>
       </footer>
@@ -131,6 +139,26 @@
           <button id="gfNotYetBtn" class="secondary" type="button">not yet, keep building us</button>
         </div>
         <p id="gfStatus" class="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section id="chaosGameModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="chaosGameTitle">
+      <div class="modal-card game-modal-card">
+        <p class="eyebrow">bonus round</p>
+        <h2 id="chaosGameTitle">Catch The Heart</h2>
+        <p class="small">hit 12 hearts in 15 seconds</p>
+        <div class="game-head">
+          <p id="gameTimer" class="small game-meta">time: 15s</p>
+          <p id="gameScore" class="small game-meta">score: 0/12</p>
+        </div>
+        <div id="gameBoard" class="game-board" aria-live="polite">
+          <button id="gameTargetBtn" class="game-target" type="button" aria-label="Catch heart">❤</button>
+        </div>
+        <p id="gameStatus" class="status" aria-live="polite">tap start when ready.</p>
+        <div class="action-row modal-actions">
+          <button id="startGameBtn" class="primary" type="button">start</button>
+          <button id="closeGameBtn" class="secondary" type="button">close</button>
+        </div>
       </div>
     </section>
 

@@ -35,6 +35,15 @@ const girlfriendModal = document.getElementById('girlfriendModal');
 const gfYesBtn = document.getElementById('gfYesBtn');
 const gfNotYetBtn = document.getElementById('gfNotYetBtn');
 const gfStatus = document.getElementById('gfStatus');
+const openGameBtn = document.getElementById('openGameBtn');
+const chaosGameModal = document.getElementById('chaosGameModal');
+const gameBoard = document.getElementById('gameBoard');
+const gameTargetBtn = document.getElementById('gameTargetBtn');
+const gameTimer = document.getElementById('gameTimer');
+const gameScore = document.getElementById('gameScore');
+const gameStatus = document.getElementById('gameStatus');
+const startGameBtn = document.getElementById('startGameBtn');
+const closeGameBtn = document.getElementById('closeGameBtn');
 const bratSecretButtons = document.querySelectorAll('.brat-secret-btn');
 const eyebrow = document.querySelector('.eyebrow');
 const eggHintBtn = document.getElementById('eggHintBtn');
@@ -51,6 +60,13 @@ let eyebrowTapTimer = null;
 let footerTapCount = 0;
 let footerTapTimer = null;
 let typewriterTimer = null;
+let gameIntervalId = null;
+let gameIsRunning = false;
+let gameTimeLeft = 15;
+let gamePoints = 0;
+
+const gameGoal = 12;
+const gameDuration = 15;
 
 const unlockedSecretSources = new Set();
 
@@ -668,6 +684,89 @@ function closeGirlfriendModal() {
   document.body.style.overflowX = 'auto';
 }
 
+function moveGameTarget() {
+  const boardRect = gameBoard.getBoundingClientRect();
+  const targetRect = gameTargetBtn.getBoundingClientRect();
+  const maxX = Math.max(0, boardRect.width - targetRect.width);
+  const maxY = Math.max(0, boardRect.height - targetRect.height);
+  const nextX = Math.random() * maxX;
+  const nextY = Math.random() * maxY;
+  gameTargetBtn.style.left = `${nextX}px`;
+  gameTargetBtn.style.top = `${nextY}px`;
+}
+
+function stopGameTimer() {
+  if (gameIntervalId) {
+    clearInterval(gameIntervalId);
+    gameIntervalId = null;
+  }
+}
+
+function resetGameBoard() {
+  stopGameTimer();
+  gameIsRunning = false;
+  gameTimeLeft = gameDuration;
+  gamePoints = 0;
+  gameTimer.textContent = `time: ${gameDuration}s`;
+  gameScore.textContent = `score: 0/${gameGoal}`;
+  gameStatus.textContent = 'tap start when ready.';
+  gameTargetBtn.classList.remove('show');
+  startGameBtn.textContent = 'start';
+}
+
+function finishGame() {
+  stopGameTimer();
+  gameIsRunning = false;
+  gameTargetBtn.classList.remove('show');
+  startGameBtn.textContent = 'play again';
+
+  if (gamePoints >= gameGoal) {
+    gameStatus.textContent = 'clean win. you are dangerously good at this.';
+    showButtonToast('chaos mode champion unlocked.');
+    confettiBurst();
+    return;
+  }
+
+  gameStatus.textContent = `you got ${gamePoints}/${gameGoal}. run it back.`;
+  showButtonToast('close. one more round?');
+}
+
+function startGameRound() {
+  stopGameTimer();
+  gameIsRunning = true;
+  gameTimeLeft = gameDuration;
+  gamePoints = 0;
+  gameTimer.textContent = `time: ${gameTimeLeft}s`;
+  gameScore.textContent = `score: ${gamePoints}/${gameGoal}`;
+  gameStatus.textContent = 'go go go.';
+  gameTargetBtn.classList.add('show');
+  startGameBtn.textContent = 'restart';
+  moveGameTarget();
+
+  gameIntervalId = setInterval(() => {
+    gameTimeLeft -= 1;
+    gameTimer.textContent = `time: ${Math.max(0, gameTimeLeft)}s`;
+    if (gameTimeLeft <= 0) {
+      finishGame();
+    }
+  }, 1000);
+}
+
+function openGameModal() {
+  resetGameBoard();
+  chaosGameModal.classList.add('show');
+  chaosGameModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGameModal() {
+  resetGameBoard();
+  chaosGameModal.classList.remove('show');
+  chaosGameModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  document.body.style.overflowX = 'auto';
+}
+
 function drawSpark(x, y, size, color) {
   ctx.save();
   ctx.translate(x, y);
@@ -748,6 +847,31 @@ gfNotYetBtn.addEventListener('click', () => {
     "all good. i'm still here, and i'm still serious about you. we keep building.";
   showButtonToast('we keep building, no weirdness.');
 });
+openGameBtn.addEventListener('click', () => {
+  openGameModal();
+  showButtonToast('bonus round opened.');
+});
+startGameBtn.addEventListener('click', () => {
+  startGameRound();
+});
+closeGameBtn.addEventListener('click', closeGameModal);
+gameTargetBtn.addEventListener('click', () => {
+  if (!gameIsRunning) {
+    return;
+  }
+
+  gamePoints += 1;
+  gameScore.textContent = `score: ${gamePoints}/${gameGoal}`;
+  moveGameTarget();
+
+  gameTargetBtn.classList.remove('pop');
+  void gameTargetBtn.offsetWidth;
+  gameTargetBtn.classList.add('pop');
+
+  if (gamePoints >= gameGoal) {
+    finishGame();
+  }
+});
 eyebrow.addEventListener('click', handleEyebrowTap);
 eggHintBtn.addEventListener('click', handleEyebrowTap);
 footerSecretTap.addEventListener('click', handleFooterTap);
@@ -771,11 +895,17 @@ girlfriendModal.addEventListener('click', (event) => {
     closeGirlfriendModal();
   }
 });
+chaosGameModal.addEventListener('click', (event) => {
+  if (event.target === chaosGameModal) {
+    closeGameModal();
+  }
+});
 window.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     closeInsideJoke();
     closeEasterEgg();
     closeLetter();
     closeGirlfriendModal();
+    closeGameModal();
   }
 });

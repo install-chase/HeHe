@@ -353,6 +353,10 @@ button {
   touch-action: manipulation;
 }
 
+button:active {
+  transform: translateY(1px) scale(0.98);
+}
+
 .opt-btn {
   background: rgba(255, 246, 250, 0.09);
   border: 1px solid rgba(255, 187, 216, 0.22);
@@ -361,13 +365,14 @@ button {
 }
 
 .opt-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.01);
 }
 
 .opt-btn.active {
   background: rgba(255, 93, 149, 0.25);
   border-color: rgba(255, 172, 209, 0.66);
   box-shadow: 0 0 0 2px rgba(255, 93, 149, 0.2);
+  animation: tapPop 260ms ease-out;
 }
 
 .action-row {
@@ -385,6 +390,8 @@ button {
   background: linear-gradient(140deg, var(--accent), var(--accent-dark));
   color: #fff;
   letter-spacing: 0.02em;
+  box-shadow: 0 8px 20px rgba(178, 28, 85, 0.22);
+  animation: buttonBreathe 2.8s ease-in-out infinite;
 }
 
 #acceptBtn {
@@ -393,7 +400,7 @@ button {
 }
 
 .primary:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.02);
   box-shadow: 0 10px 22px rgba(178, 28, 85, 0.36);
 }
 
@@ -404,7 +411,84 @@ button {
 }
 
 .secondary:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.mini-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.mini-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -35% -65% auto;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(255, 108, 169, 0.16), transparent 68%);
+  pointer-events: none;
+}
+
+.game-modal-card {
+  width: min(640px, 100%);
+}
+
+.game-head {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.game-meta {
+  margin: 0;
+  font-weight: 700;
+  color: #f2d3e2;
+}
+
+.game-board {
+  position: relative;
+  margin-top: 12px;
+  height: 270px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 185, 214, 0.28);
+  background:
+    radial-gradient(240px 120px at 18% 10%, rgba(255, 93, 149, 0.22), transparent 60%),
+    linear-gradient(145deg, rgba(32, 14, 29, 0.88), rgba(20, 10, 21, 0.9));
+  box-shadow: inset 0 1px 0 rgba(255, 209, 230, 0.08);
+  overflow: hidden;
+}
+
+.game-target {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  min-height: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 201, 226, 0.7);
+  background: radial-gradient(circle at 32% 28%, #ffc9df, #ff5d95 58%, #9f1d4f);
+  color: #fff;
+  font-size: 1.35rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.9);
+  transition: opacity 120ms ease, transform 120ms ease, left 120ms linear, top 120ms linear;
+}
+
+.game-target.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+.game-target.pop {
+  animation: tapPop 180ms ease-out;
 }
 
 .status {
@@ -489,6 +573,18 @@ button:focus-visible {
   0% { opacity: 0.45; }
   50% { opacity: 0.72; }
   100% { opacity: 0.45; }
+}
+
+@keyframes buttonBreathe {
+  0% { box-shadow: 0 8px 20px rgba(178, 28, 85, 0.22); }
+  50% { box-shadow: 0 14px 28px rgba(255, 78, 144, 0.34); }
+  100% { box-shadow: 0 8px 20px rgba(178, 28, 85, 0.22); }
+}
+
+@keyframes tapPop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 
 .modal {
