@@ -124,7 +124,7 @@ const questionFlow = [
 const fallbackCopy = {
   headline: 'For My Girl',
   leadHtml:
-    'Our husband-and-wife joke is getting dangerously accurate. You are impossible in the cutest way, and I like that confidence on you, <strong>Myszka</strong>.',
+    'If this is just an inside joke, why does "<strong>my wife</strong>" sound that right?',
   hint: 'Be bratty if you want. I am still here, still choosing you.',
   accepted: () => 'Accepted. Husband energy acknowledged. I am in.',
   negotiations: ['Yeah yeah, keep talking. I still like you too much.']
@@ -341,7 +341,7 @@ function getProfileCopy() {
     return {
       headline,
       leadHtml:
-        'You keep calling us husband and wife like it is already official. Confident, chaotic, and very you.',
+        'If this is just an inside joke, why does "my wife" sound that right?',
       hint: future
         ? 'Witty mode on. We joke heavy, but I am still intentional, Myszka.'
         : 'Witty mode on. Teasing allowed, effort still mandatory. So am I.',
@@ -362,7 +362,7 @@ function getProfileCopy() {
   return {
     headline,
     leadHtml:
-      'Our husband-and-wife inside joke is still my favorite. You say it with confidence, and I am not arguing.',
+      'If this is just an inside joke, why does "my wife" sound that right?',
     hint: future
       ? 'Sweet mode on. Soft vibe, real intention.'
       : 'Sweet mode on. Playful outside, protective where it counts.',
