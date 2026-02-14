@@ -8,6 +8,7 @@ if (viewportMeta) {
   meta.content = 'width=1024';
   document.head.appendChild(meta);
 }
+document.body.style.minWidth = '1024px';
 
 const optionButtons = document.querySelectorAll('.opt-btn');
 const chosenOption = document.getElementById('chosenOption');
@@ -85,7 +86,7 @@ const questionFlow = [
 const fallbackCopy = {
   headline: 'For My Girl',
   leadHtml:
-    'Your little "applicant queue" joke is ridiculous and I still love it. You are annoying in the cutest way, I could talk to you all day, and yeah... you are still applying for <strong>My Girl</strong>, Myszka.',
+    'Your little "applicant queue" joke is ridiculous and I still love it. You are impossible in the cutest way, I could talk to you all day, and yeah... you are still applying for <strong>My Girl</strong>, Myszka.',
   hint: 'Be bratty if you want. I am still here, still choosing you.',
   noSelection: 'Pick how you want me tonight first.',
   selectedFormat: (date) => `You picked: ${date}. I am in.`,
@@ -483,7 +484,7 @@ let particles = [];
 canvas.style.pointerEvents = 'none';
 
 function resizeCanvas() {
-  canvas.width = document.documentElement.clientWidth;
+  canvas.width = Math.max(document.documentElement.clientWidth, 1024);
   canvas.height = window.innerHeight;
   document.body.style.overflowX = 'auto';
 }
