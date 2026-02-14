@@ -85,7 +85,8 @@ const gamePipeWidth = 74;
 const gamePipeGap = 140;
 const gamePipeSpeed = 2.55;
 const gameSpawnEvery = 1180;
-const gameSealSize = 76;
+const gameSealLeft = 36;
+let gameSealSize = 76;
 
 const unlockedSecretSources = new Set();
 
@@ -689,6 +690,129 @@ function closeLetter() {
   document.body.style.overflowX = 'auto';
 }
 
+function loadSpriteImage(path) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error(`Failed to load sprite: ${path}`));
+    image.src = path;
+  });
+}
+
+async function prepareSealSprite() {
+  if (!hasGameUi) {
+    return;
+  }
+
+  try {
+    const image = await loadSpriteImage('seal1.png');
+    const sourceCanvas = document.createElement('canvas');
+    sourceCanvas.width = image.naturalWidth || image.width;
+    sourceCanvas.height = image.naturalHeight || image.height;
+    const sourceCtx = sourceCanvas.getContext('2d', { willReadFrequently: true });
+    sourceCtx.imageSmoothingEnabled = false;
+    sourceCtx.drawImage(image, 0, 0);
+
+    const pixels = sourceCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+    const data = pixels.data;
+
+    let minX = sourceCanvas.width;
+    let minY = sourceCanvas.height;
+    let maxX = -1;
+    let maxY = -1;
+
+    for (let y = 0; y < sourceCanvas.height; y += 1) {
+      for (let x = 0; x < sourceCanvas.width; x += 1) {
+        const alpha = data[(y * sourceCanvas.width + x) * 4 + 3];
+        if (alpha > 6) {
+          if (x < minX) minX = x;
+          if (y < minY) minY = y;
+          if (x > maxX) maxX = x;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+
+    if (maxX < minX || maxY < minY) {
+      return;
+    }
+
+    const trimWidth = maxX - minX + 1;
+    const trimHeight = maxY - minY + 1;
+    const padding = 6;
+
+    const trimmed = sourceCtx.getImageData(minX, minY, trimWidth, trimHeight);
+    const trimmedData = trimmed.data;
+
+    // Lift color + alpha so dark seal pixels remain visible on dark backgrounds.
+    for (let i = 0; i < trimmedData.length; i += 4) {
+      const a = trimmedData[i + 3];
+      if (a === 0) {
+        continue;
+      }
+
+      trimmedData[i] = Math.min(255, trimmedData[i] * 1.12 + 10);
+      trimmedData[i + 1] = Math.min(255, trimmedData[i + 1] * 1.1 + 10);
+      trimmedData[i + 2] = Math.min(255, trimmedData[i + 2] * 1.14 + 12);
+      trimmedData[i + 3] = Math.min(255, a * 1.55 + 14);
+    }
+
+    const trimCanvas = document.createElement('canvas');
+    trimCanvas.width = trimWidth;
+    trimCanvas.height = trimHeight;
+    const trimCtx = trimCanvas.getContext('2d');
+    trimCtx.imageSmoothingEnabled = false;
+    trimCtx.putImageData(trimmed, 0, 0);
+
+    const maskCanvas = document.createElement('canvas');
+    maskCanvas.width = trimWidth;
+    maskCanvas.height = trimHeight;
+    const maskCtx = maskCanvas.getContext('2d');
+    maskCtx.imageSmoothingEnabled = false;
+    const mask = maskCtx.createImageData(trimWidth, trimHeight);
+
+    for (let i = 0; i < trimmedData.length; i += 4) {
+      const a = trimmedData[i + 3];
+      if (a === 0) {
+        continue;
+      }
+      mask.data[i] = 255;
+      mask.data[i + 1] = 225;
+      mask.data[i + 2] = 240;
+      mask.data[i + 3] = Math.min(180, Math.floor(a * 0.75));
+    }
+    maskCtx.putImageData(mask, 0, 0);
+
+    const finalCanvas = document.createElement('canvas');
+    finalCanvas.width = trimWidth + padding * 2;
+    finalCanvas.height = trimHeight + padding * 2;
+    const finalCtx = finalCanvas.getContext('2d');
+    finalCtx.imageSmoothingEnabled = false;
+
+    // Draw a subtle outline so the sprite remains visible on dark scenes.
+    const outlineOffsets = [
+      [-2, 0], [2, 0], [0, -2], [0, 2],
+      [-2, -2], [2, -2], [-2, 2], [2, 2],
+      [-3, 0], [3, 0], [0, -3], [0, 3]
+    ];
+    outlineOffsets.forEach(([dx, dy]) => {
+      finalCtx.drawImage(maskCanvas, padding + dx, padding + dy);
+    });
+
+    finalCtx.drawImage(trimCanvas, padding, padding);
+
+    const safeSize = Math.max(64, Math.min(88, Math.round(Math.max(trimWidth, trimHeight) * 0.24)));
+    gameSealSize = safeSize;
+    gameSeal.style.width = `${gameSealSize}px`;
+    gameSeal.style.height = `${gameSealSize}px`;
+    gameSeal.style.backgroundImage = `url("${finalCanvas.toDataURL('image/png')}")`;
+    gameSeal.style.backgroundSize = '100% 100%';
+    gameSeal.style.backgroundPosition = 'center';
+  } catch (error) {
+    // Keep default CSS sprite path as fallback if sprite processing fails.
+  }
+}
+
 function renderSeal() {
   if (!hasGameUi) {
     return;
@@ -825,7 +949,7 @@ function tickGame(now) {
     pipe.topEl.style.left = `${pipe.x}px`;
     pipe.bottomEl.style.left = `${pipe.x}px`;
 
-    const sealLeft = 42;
+    const sealLeft = gameSealLeft;
     const sealRight = sealLeft + gameSealSize;
     const pipeRight = pipe.x + gamePipeWidth;
     const crossingPipe = sealRight > pipe.x && sealLeft < pipeRight;
@@ -843,7 +967,7 @@ function tickGame(now) {
       }
     }
 
-    if (!pipe.scored && pipeRight < 42) {
+    if (!pipe.scored && pipeRight < gameSealLeft) {
       pipe.scored = true;
       gameScoreValue += 1;
       if (gameScoreValue > gameBest) {
@@ -984,6 +1108,9 @@ function animate() {
   });
 
   requestAnimationFrame(animate);
+if (hasGameUi) {
+  prepareSealSprite();
+}
 }
 
 renderInterview();
