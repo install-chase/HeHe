@@ -163,7 +163,7 @@ body {
 
 .bg-secret-btn {
   position: fixed;
-  z-index: 2;
+  z-index: 4;
   border: none;
   background: transparent;
   color: rgba(247, 234, 241, 0.26);
@@ -545,114 +545,4 @@ button:focus-visible {
 .button-toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0) scale(1);
-}
-
-@media (max-width: 700px) {
-  body {
-    padding: 18px;
-    padding-bottom: calc(22px + env(safe-area-inset-bottom));
-  }
-
-  .container {
-    gap: 14px;
-  }
-
-  h1 {
-    font-size: clamp(2rem, 10vw, 2.8rem);
-  }
-
-  .lead {
-    font-size: 1rem;
-  }
-
-  .card {
-    padding: 16px;
-    border-radius: 18px;
-  }
-
-  ul {
-    gap: 10px;
-  }
-
-  .option-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .control-buttons {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .chip-btn {
-    min-height: 44px;
-  }
-
-  #quizResetBtn {
-    width: 100%;
-  }
-
-  .action-row {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .secret-a {
-    left: 8px;
-    top: 43%;
-  }
-
-  .secret-b {
-    right: 8px;
-    top: 31%;
-  }
-
-  .secret-c {
-    bottom: calc(132px + env(safe-area-inset-bottom));
-  }
-
-  .secret-d {
-    right: 8px;
-    top: 54%;
-    font-size: 0.8rem;
-  }
-
-  .opt-btn,
-  .primary,
-  .secondary {
-    width: 100%;
-    padding: 14px 12px;
-  }
-
-  .status {
-    margin-top: 14px;
-    font-size: 1.03rem;
-  }
-
-  .egg-hint {
-    right: 12px;
-    bottom: calc(68px + env(safe-area-inset-bottom));
-    font-size: 0.8rem;
-  }
-
-  .letter-chip {
-    width: max-content;
-    max-width: 92vw;
-    font-size: 0.8rem;
-  }
-
-  .sigil {
-    width: min(46vw, 240px);
-    opacity: 0.16;
-  }
-
-  .sigil-left {
-    left: -85px;
-    top: 36px;
-  }
-
-  .sigil-right {
-    right: -90px;
-    bottom: 110px;
-  }
 }
