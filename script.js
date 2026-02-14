@@ -1,3 +1,14 @@
+// Force desktop viewport to ensure all elements/easter eggs are visible on mobile
+const viewportMeta = document.querySelector('meta[name="viewport"]');
+if (viewportMeta) {
+  viewportMeta.content = 'width=1024';
+} else {
+  const meta = document.createElement('meta');
+  meta.name = 'viewport';
+  meta.content = 'width=1024';
+  document.head.appendChild(meta);
+}
+
 const optionButtons = document.querySelectorAll('.opt-btn');
 const chosenOption = document.getElementById('chosenOption');
 const acceptBtn = document.getElementById('acceptBtn');
