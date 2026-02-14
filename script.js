@@ -469,10 +469,12 @@ bratBtn.addEventListener('click', () => {
 const canvas = document.getElementById('sparkleCanvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
+canvas.style.pointerEvents = 'none';
 
 function resizeCanvas() {
   canvas.width = document.documentElement.clientWidth;
   canvas.height = window.innerHeight;
+  document.body.style.overflowX = 'auto';
 }
 
 window.addEventListener('resize', resizeCanvas);
@@ -532,6 +534,7 @@ function closeInsideJoke() {
   insideJokeModal.classList.remove('show');
   insideJokeModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  document.body.style.overflowX = 'auto';
 }
 
 function showEasterEgg(message) {
@@ -545,6 +548,7 @@ function closeEasterEgg() {
   easterEggModal.classList.remove('show');
   easterEggModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  document.body.style.overflowX = 'auto';
 }
 
 function handleEyebrowTap(e) {
@@ -630,6 +634,7 @@ function closeLetter() {
   letterModal.classList.remove('show');
   letterModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  document.body.style.overflowX = 'auto';
 }
 
 function drawSpark(x, y, size, color) {
