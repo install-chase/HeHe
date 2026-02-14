@@ -484,14 +484,18 @@ button:active {
 }
 
 .game-seal {
+  -webkit-appearance: none;
+  appearance: none;
   position: absolute;
   left: 42px;
   top: 110px;
   width: 64px;
   height: 64px;
   min-height: 0;
+  padding: 0;
   border-radius: 50%;
   border: none;
+  background-color: transparent;
   background-image: url("seal.jpg");
   background-repeat: no-repeat;
   background-size: 126% auto;
