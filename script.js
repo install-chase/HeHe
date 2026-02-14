@@ -45,6 +45,19 @@ const gameScore = document.getElementById('gameScore');
 const gameStatus = document.getElementById('gameStatus');
 const startGameBtn = document.getElementById('startGameBtn');
 const closeGameBtn = document.getElementById('closeGameBtn');
+const hasGameUi =
+  !!(
+    openGameBtn &&
+    chaosGameModal &&
+    gameBoard &&
+    gamePipes &&
+    gameSeal &&
+    gameTimer &&
+    gameScore &&
+    gameStatus &&
+    startGameBtn &&
+    closeGameBtn
+  );
 const bratSecretButtons = document.querySelectorAll('.brat-secret-btn');
 const eyebrow = document.querySelector('.eyebrow');
 const eggHintBtn = document.getElementById('eggHintBtn');
@@ -696,15 +709,24 @@ function closeGirlfriendModal() {
 }
 
 function renderSeal() {
+  if (!hasGameUi) {
+    return;
+  }
   gameSeal.style.top = `${gameSealY}px`;
 }
 
 function setGameHud() {
+  if (!hasGameUi) {
+    return;
+  }
   gameTimer.textContent = `best: ${gameBest}`;
   gameScore.textContent = `score: ${gameScoreValue}`;
 }
 
 function clearGamePipes() {
+  if (!hasGameUi) {
+    return;
+  }
   gamePipesState.forEach((pipe) => {
     pipe.topEl.remove();
     pipe.bottomEl.remove();
@@ -713,6 +735,9 @@ function clearGamePipes() {
 }
 
 function spawnGamePipe() {
+  if (!hasGameUi) {
+    return;
+  }
   const boardHeight = gameBoard.clientHeight;
   const minGapTop = 38;
   const maxGapTop = Math.max(minGapTop, boardHeight - gamePipeGap - 38);
@@ -744,7 +769,7 @@ function spawnGamePipe() {
 }
 
 function sealJump() {
-  if (!gameIsRunning) {
+  if (!hasGameUi || !gameIsRunning) {
     return;
   }
   gameSealVelocity = gameJumpImpulse;
@@ -754,6 +779,9 @@ function sealJump() {
 }
 
 function stopGameLoop() {
+  if (!hasGameUi) {
+    return;
+  }
   if (gameRafId) {
     cancelAnimationFrame(gameRafId);
     gameRafId = null;
@@ -761,6 +789,9 @@ function stopGameLoop() {
 }
 
 function endGameRound(message, toast, won) {
+  if (!hasGameUi) {
+    return;
+  }
   gameIsRunning = false;
   stopGameLoop();
   gameSeal.classList.add('funny-end');
@@ -774,7 +805,7 @@ function endGameRound(message, toast, won) {
 }
 
 function tickGame(now) {
-  if (!gameIsRunning) {
+  if (!hasGameUi || !gameIsRunning) {
     return;
   }
 
@@ -864,6 +895,9 @@ function tickGame(now) {
 }
 
 function startGameRound() {
+  if (!hasGameUi) {
+    return;
+  }
   stopGameLoop();
   clearGamePipes();
   gameIsRunning = true;
@@ -883,6 +917,9 @@ function startGameRound() {
 }
 
 function openGameModal() {
+  if (!hasGameUi) {
+    return;
+  }
   chaosGameModal.classList.add('show');
   chaosGameModal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -907,6 +944,9 @@ function openGameModal() {
 }
 
 function closeGameModal() {
+  if (!hasGameUi) {
+    return;
+  }
   stopGameLoop();
   clearGamePipes();
   gameIsRunning = false;
@@ -1003,19 +1043,21 @@ gfNotYetBtn.addEventListener('click', () => {
     "all good. i'm still here, and i'm still serious about you. we keep building.";
   showButtonToast('we keep building, no weirdness.');
 });
-openGameBtn.addEventListener('click', () => {
-  openGameModal();
-  showButtonToast('bonus round opened.');
-});
-startGameBtn.addEventListener('click', () => {
-  startGameRound();
-});
-closeGameBtn.addEventListener('click', closeGameModal);
-gameBoard.addEventListener('click', sealJump);
-gameSeal.addEventListener('click', (event) => {
-  event.stopPropagation();
-  sealJump();
-});
+if (hasGameUi) {
+  openGameBtn.addEventListener('click', () => {
+    openGameModal();
+    showButtonToast('bonus round opened.');
+  });
+  startGameBtn.addEventListener('click', () => {
+    startGameRound();
+  });
+  closeGameBtn.addEventListener('click', closeGameModal);
+  gameBoard.addEventListener('click', sealJump);
+  gameSeal.addEventListener('click', (event) => {
+    event.stopPropagation();
+    sealJump();
+  });
+}
 eyebrow.addEventListener('click', handleEyebrowTap);
 eggHintBtn.addEventListener('click', handleEyebrowTap);
 footerSecretTap.addEventListener('click', handleFooterTap);
@@ -1039,13 +1081,16 @@ girlfriendModal.addEventListener('click', (event) => {
     closeGirlfriendModal();
   }
 });
-chaosGameModal.addEventListener('click', (event) => {
-  if (event.target === chaosGameModal) {
-    closeGameModal();
-  }
-});
+if (hasGameUi) {
+  chaosGameModal.addEventListener('click', (event) => {
+    if (event.target === chaosGameModal) {
+      closeGameModal();
+    }
+  });
+}
 window.addEventListener('keydown', (event) => {
   if (
+    hasGameUi &&
     chaosGameModal.classList.contains('show') &&
     (event.key === ' ' || event.key === 'ArrowUp')
   ) {
