@@ -476,10 +476,10 @@ button:active {
   -webkit-appearance: none;
   appearance: none;
   position: absolute;
-  left: 36px;
+  left: 40px;
   top: 110px;
-  width: 76px;
-  height: 76px;
+  width: 60px;
+  height: 60px;
   min-height: 0;
   padding: 0;
   border-radius: 0;
