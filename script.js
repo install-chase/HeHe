@@ -473,7 +473,6 @@ let particles = [];
 function resizeCanvas() {
   canvas.width = document.documentElement.clientWidth;
   canvas.height = window.innerHeight;
-  document.body.style.overflowX = 'hidden';
 }
 
 window.addEventListener('resize', resizeCanvas);
@@ -533,7 +532,6 @@ function closeInsideJoke() {
   insideJokeModal.classList.remove('show');
   insideJokeModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
-  document.body.style.overflowX = 'hidden';
 }
 
 function showEasterEgg(message) {
@@ -547,7 +545,6 @@ function closeEasterEgg() {
   easterEggModal.classList.remove('show');
   easterEggModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
-  document.body.style.overflowX = 'hidden';
 }
 
 function handleEyebrowTap(e) {
@@ -633,7 +630,6 @@ function closeLetter() {
   letterModal.classList.remove('show');
   letterModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
-  document.body.style.overflowX = 'hidden';
 }
 
 function drawSpark(x, y, size, color) {
