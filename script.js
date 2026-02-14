@@ -90,7 +90,7 @@ const gamePipeWidth = 74;
 const gamePipeGap = 140;
 const gamePipeSpeed = 2.55;
 const gameSpawnEvery = 1180;
-const gameSealSize = 46;
+const gameSealSize = 76;
 
 const unlockedSecretSources = new Set();
 

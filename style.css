@@ -487,21 +487,20 @@ button:active {
   -webkit-appearance: none;
   appearance: none;
   position: absolute;
-  left: 42px;
+  left: 36px;
   top: 110px;
-  width: 64px;
-  height: 64px;
+  width: 76px;
+  height: 76px;
   min-height: 0;
   padding: 0;
-  border-radius: 50%;
+  border-radius: 0;
   border: none;
   background-color: transparent;
   background-image: url("seal1.png");
   background-repeat: no-repeat;
-  background-size: 126% auto;
-  background-position: center 34%;
-  background-color: transparent;
-  clip-path: circle(46% at 50% 50%);
+  background-size: contain;
+  background-position: center;
+  clip-path: none;
   color: transparent;
   font-size: 0;
   display: grid;
@@ -509,7 +508,11 @@ button:active {
   opacity: 1;
   transform: rotate(0deg) scale(1);
   box-shadow: none;
-  filter: saturate(1.08) contrast(1.05);
+  filter:
+    saturate(1.08)
+    contrast(1.05)
+    drop-shadow(0 0 6px rgba(255, 227, 241, 0.48))
+    drop-shadow(0 8px 10px rgba(0, 0, 0, 0.32));
   transition: transform 80ms linear;
 }
 
