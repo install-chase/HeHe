@@ -207,6 +207,15 @@ body {
   animation: secretPulse 2.6s ease-in-out infinite;
 }
 
+.super-secret-btn {
+  left: 50%;
+  top: clamp(10px, 2.2vw, 22px);
+  transform: translateX(-50%);
+  opacity: 0.2;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
 .container {
   position: relative;
   z-index: 2;
@@ -521,6 +530,10 @@ button:focus-visible {
 
 .modal-actions {
   margin-top: 14px;
+}
+
+.gf-note {
+  margin-top: 12px;
 }
 
 .button-toast {

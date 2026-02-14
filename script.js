@@ -30,6 +30,11 @@ const letterRevealBtn = document.getElementById('letterRevealBtn');
 const letterModal = document.getElementById('letterModal');
 const letterTypeText = document.getElementById('letterTypeText');
 const closeLetterBtn = document.getElementById('closeLetterBtn');
+const gfSecretBtn = document.getElementById('gfSecretBtn');
+const girlfriendModal = document.getElementById('girlfriendModal');
+const gfYesBtn = document.getElementById('gfYesBtn');
+const gfNotYetBtn = document.getElementById('gfNotYetBtn');
+const gfStatus = document.getElementById('gfStatus');
 const bratSecretButtons = document.querySelectorAll('.brat-secret-btn');
 const eyebrow = document.querySelector('.eyebrow');
 const eggHintBtn = document.getElementById('eggHintBtn');
@@ -649,6 +654,20 @@ function closeLetter() {
   document.body.style.overflowX = 'auto';
 }
 
+function openGirlfriendModal() {
+  gfStatus.textContent = '';
+  girlfriendModal.classList.add('show');
+  girlfriendModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGirlfriendModal() {
+  girlfriendModal.classList.remove('show');
+  girlfriendModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  document.body.style.overflowX = 'auto';
+}
+
 function drawSpark(x, y, size, color) {
   ctx.save();
   ctx.translate(x, y);
@@ -715,6 +734,20 @@ bratSecretButtons.forEach((button) => {
 });
 letterRevealBtn.addEventListener('click', openLetter);
 closeLetterBtn.addEventListener('click', closeLetter);
+gfSecretBtn.addEventListener('click', () => {
+  openGirlfriendModal();
+  showButtonToast('real question, no games.');
+});
+gfYesBtn.addEventListener('click', () => {
+  gfStatus.textContent =
+    'so i can call you my girlfriend now, right?';
+  showButtonToast('yeah, i am definitely smiling right now.');
+});
+gfNotYetBtn.addEventListener('click', () => {
+  gfStatus.textContent =
+    "all good. i'm still here, and i'm still serious about you. we keep building.";
+  showButtonToast('we keep building, no weirdness.');
+});
 eyebrow.addEventListener('click', handleEyebrowTap);
 eggHintBtn.addEventListener('click', handleEyebrowTap);
 footerSecretTap.addEventListener('click', handleFooterTap);
@@ -733,10 +766,16 @@ letterModal.addEventListener('click', (event) => {
     closeLetter();
   }
 });
+girlfriendModal.addEventListener('click', (event) => {
+  if (event.target === girlfriendModal) {
+    closeGirlfriendModal();
+  }
+});
 window.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     closeInsideJoke();
     closeEasterEgg();
     closeLetter();
+    closeGirlfriendModal();
   }
 });

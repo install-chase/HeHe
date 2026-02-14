@@ -24,6 +24,7 @@
     <button class="bg-secret-btn brat-secret-btn secret-b" data-secret="bully" type="button" aria-label="Hidden secret">brat</button>
     <button class="bg-secret-btn brat-secret-btn secret-c" data-secret="mine" type="button" aria-label="Hidden secret">mine?</button>
     <button class="bg-secret-btn brat-secret-btn secret-d" data-secret="war" type="button" aria-label="Hidden secret">always</button>
+    <button id="gfSecretBtn" class="bg-secret-btn super-secret-btn" type="button" aria-label="Super secret">for real?</button>
 
     <main class="container">
       <p class="eyebrow">for my favorite menace</p>
@@ -113,6 +114,23 @@
         <div class="action-row modal-actions">
           <button id="closeLetterBtn" class="primary" type="button">okay, wow</button>
         </div>
+      </div>
+    </section>
+
+    <section id="girlfriendModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="girlfriendTitle">
+      <div class="modal-card">
+        <p class="eyebrow">super secret, real one</p>
+        <h2 id="girlfriendTitle">no pressure, just me being honest</h2>
+        <p class="lead">
+          i really really like you. talking to you every day for the last month has become my favorite part of my day.
+          would you want to be my girlfriend?
+        </p>
+        <p class="small gf-note">if your answer is "not yet," that's okay. i'm serious about you either way, and i'm good building this the right way.</p>
+        <div class="action-row modal-actions">
+          <button id="gfYesBtn" class="primary" type="button">yes, i'd love that</button>
+          <button id="gfNotYetBtn" class="secondary" type="button">not yet, keep building us</button>
+        </div>
+        <p id="gfStatus" class="status" aria-live="polite"></p>
       </div>
     </section>
 
