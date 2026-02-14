@@ -705,7 +705,7 @@ async function prepareSealSprite() {
   }
 
   try {
-    const image = await loadSpriteImage('seal1.png');
+    const image = await loadSpriteImage('seal3.png');
     const sourceCanvas = document.createElement('canvas');
     sourceCanvas.width = image.naturalWidth || image.width;
     sourceCanvas.height = image.naturalHeight || image.height;
@@ -724,7 +724,7 @@ async function prepareSealSprite() {
     for (let y = 0; y < sourceCanvas.height; y += 1) {
       for (let x = 0; x < sourceCanvas.width; x += 1) {
         const alpha = data[(y * sourceCanvas.width + x) * 4 + 3];
-        if (alpha > 6) {
+        if (alpha > 1) {
           if (x < minX) minX = x;
           if (y < minY) minY = y;
           if (x > maxX) maxX = x;
@@ -739,22 +739,31 @@ async function prepareSealSprite() {
 
     const trimWidth = maxX - minX + 1;
     const trimHeight = maxY - minY + 1;
-    const padding = 6;
+    const padding = 2;
 
     const trimmed = sourceCtx.getImageData(minX, minY, trimWidth, trimHeight);
     const trimmedData = trimmed.data;
 
-    // Lift color + alpha so dark seal pixels remain visible on dark backgrounds.
+    // Lift color + alpha so faint body pixels remain visible on dark backgrounds.
     for (let i = 0; i < trimmedData.length; i += 4) {
       const a = trimmedData[i + 3];
       if (a === 0) {
+        trimmedData[i + 3] = 0;
         continue;
       }
 
-      trimmedData[i] = Math.min(255, trimmedData[i] * 1.12 + 10);
-      trimmedData[i + 1] = Math.min(255, trimmedData[i + 1] * 1.1 + 10);
-      trimmedData[i + 2] = Math.min(255, trimmedData[i + 2] * 1.14 + 12);
-      trimmedData[i + 3] = Math.min(255, a * 1.55 + 14);
+      const alphaNorm = a / 255;
+      const boostedAlpha = Math.pow(alphaNorm, 0.45);
+      const newAlpha = Math.min(
+        255,
+        alphaNorm > 0.86 ? 255 : Math.max(120, Math.round(boostedAlpha * 255))
+      );
+      const lift = 16 + (1 - alphaNorm) * 30;
+
+      trimmedData[i] = Math.min(255, trimmedData[i] * 1.18 + lift);
+      trimmedData[i + 1] = Math.min(255, trimmedData[i + 1] * 1.17 + lift);
+      trimmedData[i + 2] = Math.min(255, trimmedData[i + 2] * 1.2 + lift + 2);
+      trimmedData[i + 3] = newAlpha;
     }
 
     const trimCanvas = document.createElement('canvas');
@@ -764,41 +773,11 @@ async function prepareSealSprite() {
     trimCtx.imageSmoothingEnabled = false;
     trimCtx.putImageData(trimmed, 0, 0);
 
-    const maskCanvas = document.createElement('canvas');
-    maskCanvas.width = trimWidth;
-    maskCanvas.height = trimHeight;
-    const maskCtx = maskCanvas.getContext('2d');
-    maskCtx.imageSmoothingEnabled = false;
-    const mask = maskCtx.createImageData(trimWidth, trimHeight);
-
-    for (let i = 0; i < trimmedData.length; i += 4) {
-      const a = trimmedData[i + 3];
-      if (a === 0) {
-        continue;
-      }
-      mask.data[i] = 255;
-      mask.data[i + 1] = 225;
-      mask.data[i + 2] = 240;
-      mask.data[i + 3] = Math.min(180, Math.floor(a * 0.75));
-    }
-    maskCtx.putImageData(mask, 0, 0);
-
     const finalCanvas = document.createElement('canvas');
     finalCanvas.width = trimWidth + padding * 2;
     finalCanvas.height = trimHeight + padding * 2;
     const finalCtx = finalCanvas.getContext('2d');
     finalCtx.imageSmoothingEnabled = false;
-
-    // Draw a subtle outline so the sprite remains visible on dark scenes.
-    const outlineOffsets = [
-      [-2, 0], [2, 0], [0, -2], [0, 2],
-      [-2, -2], [2, -2], [-2, 2], [2, 2],
-      [-3, 0], [3, 0], [0, -3], [0, 3]
-    ];
-    outlineOffsets.forEach(([dx, dy]) => {
-      finalCtx.drawImage(maskCanvas, padding + dx, padding + dy);
-    });
-
     finalCtx.drawImage(trimCanvas, padding, padding);
 
     const safeSize = Math.max(64, Math.min(88, Math.round(Math.max(trimWidth, trimHeight) * 0.24)));
@@ -808,6 +787,8 @@ async function prepareSealSprite() {
     gameSeal.style.backgroundImage = `url("${finalCanvas.toDataURL('image/png')}")`;
     gameSeal.style.backgroundSize = '100% 100%';
     gameSeal.style.backgroundPosition = 'center';
+    gameSeal.style.filter =
+      'saturate(1.1) contrast(1.08) brightness(1.08) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.28))';
   } catch (error) {
     // Keep default CSS sprite path as fallback if sprite processing fails.
   }
