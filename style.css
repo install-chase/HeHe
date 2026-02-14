@@ -487,23 +487,23 @@ button:active {
   position: absolute;
   left: 42px;
   top: 110px;
-  width: 54px;
-  height: 54px;
+  width: 64px;
+  height: 64px;
   min-height: 0;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 220, 238, 0.5);
-  background:
-    radial-gradient(circle at 30% 24%, rgba(255, 228, 241, 0.35), rgba(143, 31, 77, 0.26)),
-    url("seal.jpg");
+  border-radius: 14px;
+  border: 1px solid rgba(255, 220, 238, 0.68);
+  background-image: url("seal.jpg");
+  background-repeat: no-repeat;
   background-size: cover;
-  background-position: center;
+  background-position: center 36%;
   color: transparent;
   font-size: 0;
   display: grid;
   place-items: center;
   opacity: 1;
   transform: rotate(0deg) scale(1);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.38);
+  filter: saturate(1.06) contrast(1.03);
   transition: transform 80ms linear;
 }
 
