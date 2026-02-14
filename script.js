@@ -83,7 +83,7 @@ const gamePipeGap = 140;
 const gamePipeSpeed = 2.55;
 const gameSpawnEvery = 1180;
 const gameSealLeft = 40;
-let gameSealSize = 60;
+let gameSealSize = 42;
 
 const unlockedSecretSources = new Set();
 
@@ -722,7 +722,7 @@ async function prepareSealSprite() {
     finalCtx.imageSmoothingEnabled = false;
     finalCtx.drawImage(trimCanvas, padding, padding);
 
-    const safeSize = Math.max(52, Math.min(70, Math.round(Math.max(trimWidth, trimHeight) * 0.16)));
+    const safeSize = Math.max(36, Math.min(50, Math.round(Math.max(trimWidth, trimHeight) * 0.11)));
     gameSealSize = safeSize;
     gameSeal.style.width = `${gameSealSize}px`;
     gameSeal.style.height = `${gameSealSize}px`;
