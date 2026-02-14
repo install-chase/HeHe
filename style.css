@@ -487,19 +487,23 @@ button:active {
   position: absolute;
   left: 42px;
   top: 110px;
-  width: 46px;
-  height: 46px;
+  width: 54px;
+  height: 54px;
   min-height: 0;
   border-radius: 50%;
-  border: 1px solid rgba(255, 220, 238, 0.65);
-  background: radial-gradient(circle at 30% 24%, #ffe4f1, #ff95bf 52%, #8f1f4d);
-  color: #fff;
-  font-size: 1.45rem;
-  letter-spacing: 0.03em;
+  border: 1px solid rgba(255, 220, 238, 0.5);
+  background:
+    radial-gradient(circle at 30% 24%, rgba(255, 228, 241, 0.35), rgba(143, 31, 77, 0.26)),
+    url("seal.jpg");
+  background-size: cover;
+  background-position: center;
+  color: transparent;
+  font-size: 0;
   display: grid;
   place-items: center;
   opacity: 1;
   transform: rotate(0deg) scale(1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   transition: transform 80ms linear;
 }
 
