@@ -30,11 +30,6 @@ const letterRevealBtn = document.getElementById('letterRevealBtn');
 const letterModal = document.getElementById('letterModal');
 const letterTypeText = document.getElementById('letterTypeText');
 const closeLetterBtn = document.getElementById('closeLetterBtn');
-const gfSecretBtn = document.getElementById('gfSecretBtn');
-const girlfriendModal = document.getElementById('girlfriendModal');
-const gfYesBtn = document.getElementById('gfYesBtn');
-const gfNotYetBtn = document.getElementById('gfNotYetBtn');
-const gfStatus = document.getElementById('gfStatus');
 const openGameBtn = document.getElementById('openGameBtn');
 const chaosGameModal = document.getElementById('chaosGameModal');
 const gameBoard = document.getElementById('gameBoard');
@@ -148,15 +143,15 @@ const insideJokes = [
 
 const secretNotes = {
   tapThree:
-    'On a real note, you make me really really happy, I hope this makes you feel atleast a little special, because you are.',
+    'On a real note, you make me really really happy. I hope this makes you feel at least a little special, because you are.',
   tapTwo:
     'Just a reminder, I love all the moods, brat, soft, menace, bully. I just like being a part of your day.',
   tapWar:
-    'Yeah, Id go to war for you'
+    "Yeah, I'd go to war for you."
 };
 
 const finalLetterMessage =
-  " You are genuinely my favorite, Ive never smiled at my phone like such an idiot reading ur messages. Sprawiasz, że jestem napraawdę szczęśliwa.";
+  " You are genuinely my favorite. I've never smiled at my phone like such an idiot reading your messages. Sprawiasz, że jestem naprawdę szczęśliwa.";
 
 const bratSecretNotes = {
   push: [
@@ -694,20 +689,6 @@ function closeLetter() {
   document.body.style.overflowX = 'auto';
 }
 
-function openGirlfriendModal() {
-  gfStatus.textContent = '';
-  girlfriendModal.classList.add('show');
-  girlfriendModal.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeGirlfriendModal() {
-  girlfriendModal.classList.remove('show');
-  girlfriendModal.setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = '';
-  document.body.style.overflowX = 'auto';
-}
-
 function renderSeal() {
   if (!hasGameUi) {
     return;
@@ -1029,24 +1010,10 @@ bratSecretButtons.forEach((button) => {
 });
 letterRevealBtn.addEventListener('click', openLetter);
 closeLetterBtn.addEventListener('click', closeLetter);
-gfSecretBtn.addEventListener('click', () => {
-  openGirlfriendModal();
-  showButtonToast('real question, no games.');
-});
-gfYesBtn.addEventListener('click', () => {
-  gfStatus.textContent =
-    'so i can call you my girlfriend now, right?';
-  showButtonToast('yeah, i am definitely smiling right now.');
-});
-gfNotYetBtn.addEventListener('click', () => {
-  gfStatus.textContent =
-    "all good. i'm still here, and i'm still serious about you. we keep building.";
-  showButtonToast('we keep building, no weirdness.');
-});
 if (hasGameUi) {
   openGameBtn.addEventListener('click', () => {
     openGameModal();
-    showButtonToast('bonus round opened.');
+    showButtonToast('seal game opened.');
   });
   startGameBtn.addEventListener('click', () => {
     startGameRound();
@@ -1076,11 +1043,6 @@ letterModal.addEventListener('click', (event) => {
     closeLetter();
   }
 });
-girlfriendModal.addEventListener('click', (event) => {
-  if (event.target === girlfriendModal) {
-    closeGirlfriendModal();
-  }
-});
 if (hasGameUi) {
   chaosGameModal.addEventListener('click', (event) => {
     if (event.target === chaosGameModal) {
@@ -1102,7 +1064,6 @@ window.addEventListener('keydown', (event) => {
     closeInsideJoke();
     closeEasterEgg();
     closeLetter();
-    closeGirlfriendModal();
     closeGameModal();
   }
 });

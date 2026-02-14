@@ -207,17 +207,6 @@ body {
   animation: secretPulse 2.6s ease-in-out infinite;
 }
 
-.super-secret-btn {
-  left: clamp(10px, 2.2vw, 22px);
-  top: calc(14px + env(safe-area-inset-top));
-  opacity: 0.44;
-  color: rgba(255, 224, 238, 0.62);
-  text-shadow: 0 0 10px rgba(255, 113, 170, 0.28);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  animation: superSecretGlow 3.2s ease-in-out infinite;
-}
-
 .container {
   position: relative;
   z-index: 2;
@@ -624,12 +613,6 @@ button:focus-visible {
   100% { transform: scale(1); }
 }
 
-@keyframes superSecretGlow {
-  0% { opacity: 0.34; text-shadow: 0 0 6px rgba(255, 113, 170, 0.16); }
-  50% { opacity: 0.56; text-shadow: 0 0 14px rgba(255, 137, 185, 0.35); }
-  100% { opacity: 0.34; text-shadow: 0 0 6px rgba(255, 113, 170, 0.16); }
-}
-
 @keyframes sealFlap {
   0% { transform: rotate(0deg) scale(1); }
   35% { transform: rotate(-14deg) scale(1.05); }
@@ -681,10 +664,6 @@ button:focus-visible {
 
 .modal-actions {
   margin-top: 14px;
-}
-
-.gf-note {
-  margin-top: 12px;
 }
 
 .button-toast {
