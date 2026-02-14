@@ -38,7 +38,8 @@ const gfStatus = document.getElementById('gfStatus');
 const openGameBtn = document.getElementById('openGameBtn');
 const chaosGameModal = document.getElementById('chaosGameModal');
 const gameBoard = document.getElementById('gameBoard');
-const gameTargetBtn = document.getElementById('gameTargetBtn');
+const gamePipes = document.getElementById('gamePipes');
+const gameSeal = document.getElementById('gameSeal');
 const gameTimer = document.getElementById('gameTimer');
 const gameScore = document.getElementById('gameScore');
 const gameStatus = document.getElementById('gameStatus');
@@ -60,13 +61,23 @@ let eyebrowTapTimer = null;
 let footerTapCount = 0;
 let footerTapTimer = null;
 let typewriterTimer = null;
-let gameIntervalId = null;
 let gameIsRunning = false;
-let gameTimeLeft = 15;
-let gamePoints = 0;
+let gameBest = 0;
+let gameScoreValue = 0;
+let gameSealY = 110;
+let gameSealVelocity = 0;
+let gameLastFrame = 0;
+let gameSpawnTimer = 0;
+let gameRafId = null;
+let gamePipesState = [];
 
-const gameGoal = 12;
-const gameDuration = 15;
+const gameGravity = 0.32;
+const gameJumpImpulse = -6.1;
+const gamePipeWidth = 74;
+const gamePipeGap = 140;
+const gamePipeSpeed = 2.55;
+const gameSpawnEvery = 1180;
+const gameSealSize = 46;
 
 const unlockedSecretSources = new Set();
 
@@ -684,83 +695,228 @@ function closeGirlfriendModal() {
   document.body.style.overflowX = 'auto';
 }
 
-function moveGameTarget() {
-  const boardRect = gameBoard.getBoundingClientRect();
-  const targetRect = gameTargetBtn.getBoundingClientRect();
-  const maxX = Math.max(0, boardRect.width - targetRect.width);
-  const maxY = Math.max(0, boardRect.height - targetRect.height);
-  const nextX = Math.random() * maxX;
-  const nextY = Math.random() * maxY;
-  gameTargetBtn.style.left = `${nextX}px`;
-  gameTargetBtn.style.top = `${nextY}px`;
+function renderSeal() {
+  gameSeal.style.top = `${gameSealY}px`;
 }
 
-function stopGameTimer() {
-  if (gameIntervalId) {
-    clearInterval(gameIntervalId);
-    gameIntervalId = null;
+function setGameHud() {
+  gameTimer.textContent = `best: ${gameBest}`;
+  gameScore.textContent = `score: ${gameScoreValue}`;
+}
+
+function clearGamePipes() {
+  gamePipesState.forEach((pipe) => {
+    pipe.topEl.remove();
+    pipe.bottomEl.remove();
+  });
+  gamePipesState = [];
+}
+
+function spawnGamePipe() {
+  const boardHeight = gameBoard.clientHeight;
+  const minGapTop = 38;
+  const maxGapTop = Math.max(minGapTop, boardHeight - gamePipeGap - 38);
+  const gapTop = minGapTop + Math.random() * (maxGapTop - minGapTop);
+  const startX = gameBoard.clientWidth + 14;
+
+  const topEl = document.createElement('div');
+  topEl.className = 'game-pipe game-pipe-top';
+  topEl.style.left = `${startX}px`;
+  topEl.style.width = `${gamePipeWidth}px`;
+  topEl.style.height = `${gapTop}px`;
+
+  const bottomEl = document.createElement('div');
+  bottomEl.className = 'game-pipe game-pipe-bottom';
+  bottomEl.style.left = `${startX}px`;
+  bottomEl.style.width = `${gamePipeWidth}px`;
+  bottomEl.style.top = `${gapTop + gamePipeGap}px`;
+  bottomEl.style.height = `${Math.max(0, boardHeight - gapTop - gamePipeGap)}px`;
+
+  gamePipes.appendChild(topEl);
+  gamePipes.appendChild(bottomEl);
+  gamePipesState.push({
+    x: startX,
+    gapTop,
+    scored: false,
+    topEl,
+    bottomEl
+  });
+}
+
+function sealJump() {
+  if (!gameIsRunning) {
+    return;
+  }
+  gameSealVelocity = gameJumpImpulse;
+  gameSeal.classList.remove('flap');
+  void gameSeal.offsetWidth;
+  gameSeal.classList.add('flap');
+}
+
+function stopGameLoop() {
+  if (gameRafId) {
+    cancelAnimationFrame(gameRafId);
+    gameRafId = null;
   }
 }
 
-function resetGameBoard() {
-  stopGameTimer();
+function endGameRound(message, toast, won) {
   gameIsRunning = false;
-  gameTimeLeft = gameDuration;
-  gamePoints = 0;
-  gameTimer.textContent = `time: ${gameDuration}s`;
-  gameScore.textContent = `score: 0/${gameGoal}`;
-  gameStatus.textContent = 'tap start when ready.';
-  gameTargetBtn.classList.remove('show');
-  startGameBtn.textContent = 'start';
+  stopGameLoop();
+  gameSeal.classList.add('funny-end');
+  gameStatus.textContent = message;
+  startGameBtn.textContent = 'play again';
+  showButtonToast(toast);
+
+  if (won) {
+    confettiBurst();
+  }
 }
 
-function finishGame() {
-  stopGameTimer();
-  gameIsRunning = false;
-  gameTargetBtn.classList.remove('show');
-  startGameBtn.textContent = 'play again';
-
-  if (gamePoints >= gameGoal) {
-    gameStatus.textContent = 'clean win. you are dangerously good at this.';
-    showButtonToast('chaos mode champion unlocked.');
-    confettiBurst();
+function tickGame(now) {
+  if (!gameIsRunning) {
     return;
   }
 
-  gameStatus.textContent = `you got ${gamePoints}/${gameGoal}. run it back.`;
-  showButtonToast('close. one more round?');
+  if (!gameLastFrame) {
+    gameLastFrame = now;
+  }
+  const deltaMs = Math.min(32, now - gameLastFrame);
+  const speedScale = deltaMs / 16.67;
+  gameLastFrame = now;
+  gameSpawnTimer += deltaMs;
+
+  gameSealVelocity += gameGravity * speedScale;
+  gameSealY += gameSealVelocity * speedScale;
+  renderSeal();
+
+  const boardHeight = gameBoard.clientHeight;
+  const boardWidth = gameBoard.clientWidth;
+
+  if (gameSealY <= 0 || gameSealY + gameSealSize >= boardHeight) {
+    endGameRound(
+      'seal belly-flopped with zero shame. also, you look too good to lose, run it back.',
+      'seal did a dramatic flop.',
+      false
+    );
+    return;
+  }
+
+  if (gameSpawnTimer >= gameSpawnEvery) {
+    spawnGamePipe();
+    gameSpawnTimer = 0;
+  }
+
+  for (let i = gamePipesState.length - 1; i >= 0; i -= 1) {
+    const pipe = gamePipesState[i];
+    pipe.x -= gamePipeSpeed * speedScale;
+    pipe.topEl.style.left = `${pipe.x}px`;
+    pipe.bottomEl.style.left = `${pipe.x}px`;
+
+    const sealLeft = 42;
+    const sealRight = sealLeft + gameSealSize;
+    const pipeRight = pipe.x + gamePipeWidth;
+    const crossingPipe = sealRight > pipe.x && sealLeft < pipeRight;
+
+    if (crossingPipe) {
+      const hitsTop = gameSealY < pipe.gapTop;
+      const hitsBottom = gameSealY + gameSealSize > pipe.gapTop + gamePipeGap;
+      if (hitsTop || hitsBottom) {
+        endGameRound(
+          'seal went full cartoon mode at the pipe. still, you are dangerously pretty and smooth.',
+          'pipe clipped. you still looked cool.',
+          false
+        );
+        return;
+      }
+    }
+
+    if (!pipe.scored && pipeRight < 42) {
+      pipe.scored = true;
+      gameScoreValue += 1;
+      if (gameScoreValue > gameBest) {
+        gameBest = gameScoreValue;
+      }
+      setGameHud();
+
+      if (gameScoreValue > 0 && gameScoreValue % 8 === 0) {
+        showButtonToast('clean run. you are built for this.');
+      }
+    }
+
+    if (pipeRight < -8) {
+      pipe.topEl.remove();
+      pipe.bottomEl.remove();
+      gamePipesState.splice(i, 1);
+    }
+  }
+
+  if (gameScoreValue >= 20) {
+    endGameRound(
+      'seal hit a victory shimmy and i am impressed. you are unreal at this, gorgeous.',
+      '20 points. absolutely lethal.',
+      true
+    );
+    return;
+  }
+
+  gameRafId = requestAnimationFrame(tickGame);
 }
 
 function startGameRound() {
-  stopGameTimer();
+  stopGameLoop();
+  clearGamePipes();
   gameIsRunning = true;
-  gameTimeLeft = gameDuration;
-  gamePoints = 0;
-  gameTimer.textContent = `time: ${gameTimeLeft}s`;
-  gameScore.textContent = `score: ${gamePoints}/${gameGoal}`;
+  gameScoreValue = 0;
+  gameSealY = Math.max(24, Math.floor((gameBoard.clientHeight - gameSealSize) * 0.45));
+  gameSealVelocity = 0;
+  gameLastFrame = 0;
+  gameSpawnTimer = 0;
   gameStatus.textContent = 'go go go.';
-  gameTargetBtn.classList.add('show');
   startGameBtn.textContent = 'restart';
-  moveGameTarget();
-
-  gameIntervalId = setInterval(() => {
-    gameTimeLeft -= 1;
-    gameTimer.textContent = `time: ${Math.max(0, gameTimeLeft)}s`;
-    if (gameTimeLeft <= 0) {
-      finishGame();
-    }
-  }, 1000);
+  gameSeal.classList.remove('funny-end');
+  gameSeal.classList.add('show');
+  renderSeal();
+  setGameHud();
+  spawnGamePipe();
+  gameRafId = requestAnimationFrame(tickGame);
 }
 
 function openGameModal() {
-  resetGameBoard();
   chaosGameModal.classList.add('show');
   chaosGameModal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+
+  stopGameLoop();
+  clearGamePipes();
+  gameIsRunning = false;
+  gameScoreValue = 0;
+  gameSealY = 110;
+  gameSealVelocity = 0;
+  gameLastFrame = 0;
+  gameSpawnTimer = 0;
+  gameStatus.textContent = 'tap start when ready.';
+  startGameBtn.textContent = 'start';
+  gameSeal.classList.remove('funny-end');
+  gameSeal.classList.add('show');
+  setGameHud();
+  requestAnimationFrame(() => {
+    gameSealY = Math.max(24, Math.floor((gameBoard.clientHeight - gameSealSize) * 0.45));
+    renderSeal();
+  });
 }
 
 function closeGameModal() {
-  resetGameBoard();
+  stopGameLoop();
+  clearGamePipes();
+  gameIsRunning = false;
+  gameSeal.classList.remove('funny-end');
+  gameSeal.classList.remove('flap');
+  gameSeal.classList.remove('show');
+  gameStatus.textContent = 'tap start when ready.';
+  startGameBtn.textContent = 'start';
+  gameScoreValue = 0;
+  setGameHud();
   chaosGameModal.classList.remove('show');
   chaosGameModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
@@ -855,22 +1011,10 @@ startGameBtn.addEventListener('click', () => {
   startGameRound();
 });
 closeGameBtn.addEventListener('click', closeGameModal);
-gameTargetBtn.addEventListener('click', () => {
-  if (!gameIsRunning) {
-    return;
-  }
-
-  gamePoints += 1;
-  gameScore.textContent = `score: ${gamePoints}/${gameGoal}`;
-  moveGameTarget();
-
-  gameTargetBtn.classList.remove('pop');
-  void gameTargetBtn.offsetWidth;
-  gameTargetBtn.classList.add('pop');
-
-  if (gamePoints >= gameGoal) {
-    finishGame();
-  }
+gameBoard.addEventListener('click', sealJump);
+gameSeal.addEventListener('click', (event) => {
+  event.stopPropagation();
+  sealJump();
 });
 eyebrow.addEventListener('click', handleEyebrowTap);
 eggHintBtn.addEventListener('click', handleEyebrowTap);
@@ -901,6 +1045,14 @@ chaosGameModal.addEventListener('click', (event) => {
   }
 });
 window.addEventListener('keydown', (event) => {
+  if (
+    chaosGameModal.classList.contains('show') &&
+    (event.key === ' ' || event.key === 'ArrowUp')
+  ) {
+    event.preventDefault();
+    sealJump();
+  }
+
   if (event.key === 'Escape') {
     closeInsideJoke();
     closeEasterEgg();
